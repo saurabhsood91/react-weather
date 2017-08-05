@@ -1,5 +1,24 @@
+var webpack = require('webpack');
+
 module.exports = {
-    entry: './app/app.jsx',
+    entry: [
+        // load jquery, app.jsx and foundation
+        // order matters here
+        // script! needed as jquery and foundation are not webpack suited
+        // using the script-loader module here
+        'script!jquery/dist/jquery.min.js',
+        'script!foundation-sites/dist/foundation.min.js',
+        './app/app.jsx'
+    ],
+    externals: {
+        jquery: 'jQuery' //so that foundation can attach it's method
+    },
+    plugins: [
+        new webpack.ProvidePlugin({
+            '$': 'jquery', //Whenever we encounter $, replace with 'jquery' module,
+            'jQuery': 'jquery'
+        })
+    ],
     output: {
         path: __dirname,
         filename: './public/bundle.js'
