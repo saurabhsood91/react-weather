@@ -12,12 +12,26 @@ var Weather = React.createClass({
 
         };
     },
+    componentDidMount: function() {
+        // To handle search
+        // URL change
+        // Pull out query string params
+        // Due to React Router, this will be passed using props
+        var location = this.props.location.query.location;
+        if(location && location.length > 0) {
+            this.handleSearch(location);
+            // Remove the query string paramater
+            window.location.hash = '#/';
+        }
+    },
     handleSearch: function(city) {
         var that = this;
 
         this.setState({
             isLoading: true,
-            errorMessage: undefined
+            errorMessage: undefined,
+            location: undefined,
+            temp: undefined
         });
 
         openWeatherMap.getTemp(city).then(function(temp) {
@@ -33,6 +47,16 @@ var Weather = React.createClass({
                 errorMessage: errorMessage.message
             });
         });
+    },
+    componentWillReceiveProps: function(newProps) {
+        // React Router will pass new props
+        // when the url changes
+        var location = newProps.location.query.location;
+        if(location && location.length > 0) {
+            this.handleSearch(location);
+            // Remove the query string paramater
+            window.location.hash = '#/';
+        }
     },
     render: function() {
         var {city, temp, isLoading, errorMessage} = this.state;
